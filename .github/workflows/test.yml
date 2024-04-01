@@ -15,6 +15,8 @@ jobs:
         with:
           python-version: '3.12'
           cache: 'pip'
+      - name:
+        run: pwd
       - name: install pip dependencies
         run: pip install -r $GITHUB_ACTION_REPOSITORY/tests/requirements.txt
       - name: run integration tests
