@@ -3,6 +3,3 @@
   - debug: var=foo
   vars:
     foo: bar
-- hosts: masters[1]
-  tasks:
-  - debug: msg=hello
