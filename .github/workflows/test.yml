@@ -13,10 +13,6 @@ jobs:
         with:
           python-version: '3.12'
           cache: 'pip'
-      - name:
-        run: |
-          pwd
-          ls -la
       - name: install pip dependencies
         run: pip install -r ./tests/requirements.txt
       - name: run integration tests
