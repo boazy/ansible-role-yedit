@@ -1,0 +1,23 @@
+name: Integration Tests
+
+on:
+  - push
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          path: "${{ github.repository }}"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+      - name: install pip dependencies
+        run: pip install -r tests/requirements.txt
+      - name: run integration tests
+        run: |
+          set -e
+          ansible-playbook --module-path=./library/ tests/integration/yedit.yml

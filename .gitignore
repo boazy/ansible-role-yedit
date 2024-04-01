@@ -1,3 +1,4 @@
 # VIM tmp files
 *.swp
 venv
+tests/integration/kube-manager-test**

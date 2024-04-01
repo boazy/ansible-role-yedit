@@ -1,0 +1,13 @@
+name: Release to Galaxy
+
+on:
+  - publish
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: galaxy
+        uses: robertdebock/galaxy-action@1.2.0
+        with:
+          galaxy_api_key: ${{ secrets.galaxy_api_key }}
