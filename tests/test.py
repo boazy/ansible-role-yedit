@@ -10,5 +10,5 @@ import yedit
 # perform simple test from README.md
 yedit = yedit.Yedit('./pytest.yml')
 results = yedit.put('a#b#c', {'d': {'e': {'f': "this is a test"}}})
-print results
+print(results)
 #yedit.write()
