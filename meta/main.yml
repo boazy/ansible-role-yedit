@@ -1,14 +1,23 @@
 ---
 galaxy_info:
-  author: Kenny Woodson
+  name: yedit 
+  namespace: mitre
+  version: 1.0.0
+  readme: README.md
+  authors: MITRE SAF Team
+  homepage: https://saf.mitre.org 
   description: A yaml/json editing module for idempotent edits.
-  company: Red Hat, Inc.
-  license: Apache License, Version 2.0
-  min_ansible_version: 1.8
+  company: The MITRE Corporation
+  license: Apache-2.0
+  tags: ['mitre-saf', 'yaml', 'ansible']
+  repository: https://github.com/mitre/ansible-role-yedit
+  min_ansible_version: "1.8"
   platforms:
   - name: EL
     versions:
     - 7
+    - 8
+    - 9
   galaxy_tags:
   - json
   - yaml

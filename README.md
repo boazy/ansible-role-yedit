@@ -16,20 +16,20 @@ I didn't see a good method of editing yaml files and config managing them throug
 
 You can install via Ansible Galaxy:
 
-    $ ansible-galaxy install kwoodson.yedit
+    $ ansible-galaxy install mitre.yedit
     
 If you do this, you should also add a `requirements.yml` so other users of your playbook know what dependencies to install:
 
 ```yaml
 ---
-- src: kwoodson.yedit
+- src: mitre.yedit
 ```
 
 You can then reference it in a play by importing it before use:
 
 ```yaml
   roles:
-    - kwoodson.yedit
+    - mitre.yedit
     - role-that-uses-yedit
 ```
     
@@ -41,7 +41,7 @@ Sometimes it is necessary to config manage .yml files.
 - hosts: localhost
   gather_facts: no
   roles: 
-  - kwoodson.yedit
+  - mitre.yedit
   tasks:
   - name: manage yaml files
     yedit:
@@ -71,4 +71,4 @@ As this is a role, just copy it into any roles directory recognized by Ansible. 
 
 == Documentation
 
-Full documentation is available inline https://github.com/kwoodson/ansible-role-yedit/blob/master/library/yedit.py#L15[here].
+Full documentation is available inline https://github.com/mitre/ansible-role-yedit/blob/master/library/yedit.py#L15[here].
