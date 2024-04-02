@@ -2,3 +2,4 @@
 *.swp
 venv
 tests/integration/kube-manager-test**
+*.tar.gz

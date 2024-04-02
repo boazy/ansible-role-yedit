@@ -1,0 +1,13 @@
+---
+name: yedit 
+namespace: mitre
+version: 1.0.0
+readme: README.md
+authors: MITRE SAF Team
+homepage: https://saf.mitre.org 
+description: A yaml/json editing module for idempotent edits.
+company: The MITRE Corporation
+license: Apache-2.0
+tags: ['mitre-saf', 'yaml', 'ansible']
+repository: https://github.com/mitre/ansible-role-yedit
+dependencies: []
