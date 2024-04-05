@@ -4,7 +4,7 @@ dependencies: []
 galaxy_info:
   role_name: yedit
   namespace: mitre
-  author: "Sean Chacon Cai, Will Dower, and Aaron Lippold"
+  author: "Kenny Woodson, Sean Chacon Cai, Will Dower, and Aaron Lippold"
   description: A yaml/json editing module for idempotent edits.
   company: The MITRE Corporation
   license: Apache License, Version 2.0

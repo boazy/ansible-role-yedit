@@ -2,9 +2,7 @@
 
 This repository contains an ansible module for modifying YAML files.
 
-I didn't see a good method for editing YAML files and managing their configurations through ansible. This is my attempt.
-
-Updated to fix file permissions changing when using yedit.
+Forked to preserve file mode when using yedit.
 
 ## Install
 
