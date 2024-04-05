@@ -1,29 +1,22 @@
-// vim: ft=asciidoc
+# Ansible Role: Yedit
 
-= yedit repository
-:toc: macro
-:toc-title:
+This repository contains an ansible module for modifying YAML files.
 
-toc::[]
+I didn't see a good method for editing YAML files and managing their configurations through ansible. This is my attempt.
 
-== Ansible Role: Yedit
+Updated to fix file permissions changing when using yedit.
 
-This repository contains an ansible module for modifying yaml files.
-
-I didn't see a good method of editing yaml files and config managing them through ansible. This is my attempt.
-
-Updated version to fix permissions changing when using yedit on a file
-
-== Install
+## Install
 
 You can install via Ansible Galaxy:
 
-    $ ansible-galaxy install mitre.yedit
+```
+ansible-galaxy install mitre.yedit
+```
 
 If you do this, you should also add a `requirements.yml` so other users of your playbook know what dependencies to install:
 
 ```yaml
----
 - src: mitre.yedit
 ```
 
@@ -35,46 +28,39 @@ roles:
   - role-that-uses-yedit
 ```
 
-== Examples
+## Examples
 
-Sometimes it is necessary to config manage .yml files.
-[source,yaml]
+Managing `.yml` files might be necessary for configuration management. Here's how you can use the Yedit module in an Ansible playbook:
 
----
-
+```yaml
 - hosts: localhost
   gather_facts: no
   roles:
+    - mitre.yedit
+  tasks:
+    - name: manage yaml files
+      yedit:
+        src: /tmp/test.yaml
+        key: a.b.c
+        value: { d: { e: { f: "this is a test" } } }
 
-  - mitre.yedit
-    tasks:
-  - name: manage yaml files
-    yedit:
-    src: /tmp/test.yaml
-    key: a.b.c
-    value:
-    d:
-    e:
-    f:
-    this is a test
+    - name: get a specific value
+      yedit:
+        src: /tmp/test.yaml
+        state: list
+        key: a.b.c.d.e.f
+      register: yeditout
 
-  - name: get a specific value
-    yedit:
-    src: /tmp/test.yaml
-    state: list
-    key: a.b.c.d.e.f
-    register: yeditout
-  - debug: var=yeditout
+    - debug: var=yeditout
+```
 
----
+## Development
 
-== Development
+To incorporate this role into your Ansible setup, simply place it into any directory that Ansible recognizes as a role directory. For further details on embedding modules and plugins within roles and using module utilities, refer to the Ansible documentation links provided:
 
-As this is a role, just copy it into any roles directory recognized by Ansible. For details, see http://docs.ansible.com/ansible/latest/index.html[Ansible documentation]:
+- [Embedding Modules and Plugins In Roles](http://docs.ansible.com/ansible/devel/playbooks_reuse_roles.html#embedding-modules-and-plugins-in-roles)
+- [module_utils](http://docs.ansible.com/ansible/latest/intro_configuration.html#module-utils)
 
-- http://docs.ansible.com/ansible/devel/playbooks_reuse_roles.html#embedding-modules-and-plugins-in-roles[Embedding Modules and Plugins In Roles]
-- http://docs.ansible.com/ansible/latest/intro_configuration.html#module-utils[module_utils]
+## Documentation
 
-== Documentation
-
-Full documentation is available inline https://github.com/mitre/ansible-role-yedit/blob/master/library/yedit.py#L15[here].
+Comprehensive documentation is directly available in the role's library file on GitHub. You can access it [here](https://github.com/mitre/ansible-role-yedit/blob/main/library/yedit.py#L15).
