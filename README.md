@@ -12,7 +12,7 @@ This repository contains an ansible module for modifying yaml files.
 
 I didn't see a good method of editing yaml files and config managing them through ansible. This is my attempt.
 
-Updated version to fix permissions changing when using yedit on a file.
+Updated version to fix permissions changing when using yedit on a file
 
 == Install
 
