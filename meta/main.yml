@@ -1,11 +1,9 @@
 ---
-dependencies: []
-
 galaxy_info:
   role_name: yedit
   namespace: mitre
   author: "Kenny Woodson, Sean Chacon Cai, Will Dower, and Aaron Lippold"
-  description: A yaml/json editing module for idempotent edits.
+  description: A module designed for idempotent editing of YAML and JSON files
   company: The MITRE Corporation
   license: Apache License, Version 2.0
   min_ansible_version: 2.10
@@ -17,7 +15,8 @@ galaxy_info:
     - mitre
     - saf
     - yaml
-    - yaml
     - edit
     - json
     - yedit
+
+dependencies: []

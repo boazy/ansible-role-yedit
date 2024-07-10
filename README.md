@@ -1,12 +1,12 @@
-# Ansible Role: Yedit
+# Ansible Module: Yedit
 
-This repository contains an ansible module for modifying YAML files.
+This repository contains an Ansible module for modifying YAML files.
 
 Forked to preserve file mode when using yedit.
 
 ## Install
 
-You can install via Ansible Galaxy:
+You can install the `mitre.yedit` role via Ansible Galaxy:
 
 ```
 ansible-galaxy install mitre.yedit
@@ -15,15 +15,9 @@ ansible-galaxy install mitre.yedit
 If you do this, you should also add a `requirements.yml` so other users of your playbook know what dependencies to install:
 
 ```yaml
-- src: mitre.yedit
-```
-
-You can then reference it in a play by importing it before use:
-
-```yaml
+# requirements.yml
 roles:
-  - mitre.yedit
-  - role-that-uses-yedit
+  - src: mitre.yedit
 ```
 
 ## Examples
@@ -31,10 +25,10 @@ roles:
 Managing `.yml` files might be necessary for configuration management. Here's how you can use the Yedit module in an Ansible playbook:
 
 ```yaml
+# playbook.yml
 - hosts: localhost
-  gather_facts: no
   roles:
-    - mitre.yedit
+    - role: mitre.yedit
   tasks:
     - name: manage yaml files
       yedit:
