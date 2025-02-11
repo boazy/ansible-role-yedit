@@ -23,7 +23,7 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 DOCUMENTATION = '''
 ---
 module: yedit
-version_added: "2.6"
+version_added: "2.0.0"
 short_description: Create, modify, and idempotently manage yaml files.
 description:
   - Modify yaml files programmatically.
@@ -889,14 +889,16 @@ class Yedit:
             return {'changed': False, 'result': yamlfile.yaml_dict, 'state': state}
         return {'failed': True, 'msg': 'Unkown state passed'}
 
+
 def json_roundtrip_clean(js):
     ''' Clean-up any non-string keys from a Python object, to ensure it can be serialized as JSON '''
     cleaned_json = json.dumps(js, skipkeys=True)
     return json.loads(cleaned_json)
 
+
 # pylint: disable=too-many-branches
 def main():
-    ''' ansible oc module for secrets '''
+    ''' ansible module for editing yaml files '''
 
     module = AnsibleModule(
         argument_spec=dict(
