@@ -1,19 +1,17 @@
 ---
 galaxy_info:
   role_name: yedit
-  namespace: mitre
-  author: "Kenny Woodson, Sean Chacon Cai, Will Dower, and Aaron Lippold"
+  namespace: boazy
+  author: "Kenny Woodson, Sean Chacon Cai, Will Dower, and Aaron Lippold, Boaz Yaniv"
   description: A module designed for idempotent editing of YAML and JSON files
   company: The MITRE Corporation
   license: Apache License, Version 2.0
-  min_ansible_version: 2.10
+  min_ansible_version: "2.10"
   platforms:
     - name: EL
       versions:
         - all
   galaxy_tags:
-    - mitre
-    - saf
     - yaml
     - edit
     - json

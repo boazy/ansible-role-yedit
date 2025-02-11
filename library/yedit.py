@@ -1,12 +1,20 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+# GNU General Public License v3.0+
+# (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-# pylint: disable=wrong-import-order,wrong-import-position,unused-import
+import copy
+import fcntl
+import json
+import os
+import re
+import shutil
+import time  # noqa: F401
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
+from ansible.module_utils.basic import AnsibleModule
+
+import ruamel.yaml as yaml
 
 ANSIBLE_METADATA = {'metadata_version': '1.1',
                     'status': ['preview'],
@@ -186,20 +194,8 @@ EXAMPLES = '''
 #       d: e
 '''
 
-import copy  # noqa: F401
-import fcntl  # noqa: F401
-import json   # noqa: F401
-import os  # noqa: F401
-import re  # noqa: F401
-import shutil  # noqa: F401
-import time  # noqa: F401
 
-try:
-    import ruamel.yaml as yaml  # noqa: F401
-except ImportError:
-    import yaml  # noqa: F401
-
-from ansible.module_utils.basic import AnsibleModule
+default_yaml = yaml.YAML()
 
 
 class YeditException(Exception):
@@ -208,7 +204,7 @@ class YeditException(Exception):
 
 
 # pylint: disable=too-many-public-methods,too-many-instance-attributes
-class Yedit(object):
+class Yedit:
     ''' Class to modify yaml files '''
     re_valid_key = r"(((\[-?\d+\])|([0-9a-zA-Z%s/_-]+)).?)+$"
     re_key = r"(?:\[(-?\d+)\])|([0-9a-zA-Z{}/_-]+)"
@@ -409,7 +405,7 @@ class Yedit(object):
         return data
 
     @staticmethod
-    def _write(filename, contents):
+    def _write(filename, write_func):
         ''' Actually write the file contents to disk. This helps with mocking. '''
 
         tmp_filename = filename + '.yedit'
@@ -418,7 +414,7 @@ class Yedit(object):
         fd = os.open(tmp_filename, flags=(os.O_WRONLY | os.O_CREAT | os.O_TRUNC), mode=original_mode)
         with open(fd, 'w') as yfd:
             fcntl.flock(yfd, fcntl.LOCK_EX | fcntl.LOCK_NB)
-            yfd.write(contents)
+            write_func(yfd)
             yfd.flush()  # flush internal buffers
             try:
                 os.fsync(yfd.fileno())  # ensure buffer content reached disk
@@ -448,20 +444,11 @@ class Yedit(object):
         if self.backup and self.file_exists():
             shutil.copy(self.filename, '{0}{1}'.format(self.filename, self.backup_ext))
 
-        # Try to set format attributes if supported
-        try:
-            self.yaml_dict.fa.set_block_style()
-        except AttributeError:
-            pass
-
         # Try to use RoundTripDumper if supported.
         if self.content_type == 'yaml':
-            try:
-                Yedit._write(self.filename, yaml.dump(self.yaml_dict, Dumper=yaml.RoundTripDumper))
-            except AttributeError:
-                Yedit._write(self.filename, yaml.safe_dump(self.yaml_dict, default_flow_style=False))
+            Yedit._write(self.filename, lambda f: default_yaml.dump(self.yaml_dict, f))
         elif self.content_type == 'json':
-            Yedit._write(self.filename, json.dumps(self.yaml_dict, indent=4, sort_keys=True))
+            Yedit._write(self.filename, lambda f: json.dump(self.yaml_dict, f, indent=4, sort_keys=True))
         else:
             raise YeditException('Unsupported content_type: {0}.'.format(self.content_type) +
                                  'Please specify a content_type of yaml or json.')
@@ -504,29 +491,13 @@ class Yedit(object):
         # check if it is yaml
         try:
             if content_type == 'yaml' and contents:
-                # Try to set format attributes if supported
-                try:
-                    self.yaml_dict.fa.set_block_style()
-                except AttributeError:
-                    pass
-
-                # Try to use RoundTripLoader if supported.
-                try:
-                    self.yaml_dict = yaml.load(contents, yaml.RoundTripLoader)
-                except AttributeError:
-                    self.yaml_dict = yaml.safe_load(contents)
-
-                # Try to set format attributes if supported
-                try:
-                    self.yaml_dict.fa.set_block_style()
-                except AttributeError:
-                    pass
+                self.yaml_dict = default_yaml.load(contents)
 
             elif content_type == 'json' and contents:
                 self.yaml_dict = json.loads(contents)
         except yaml.YAMLError as err:
             # Error loading yaml or json
-            raise YeditException('Problem with loading yaml file. {0}'.format(err))
+            raise YeditException(f'Problem with loading yaml file. {err}')
 
         return self.yaml_dict
 
@@ -707,20 +678,7 @@ class Yedit(object):
         if entry == value:
             return (False, self.yaml_dict)
 
-        # deepcopy didn't work
-        # Try to use ruamel.yaml and fallback to pyyaml
-        try:
-            tmp_copy = yaml.load(yaml.round_trip_dump(self.yaml_dict,
-                                                      default_flow_style=False),
-                                 yaml.RoundTripLoader)
-        except AttributeError:
-            tmp_copy = copy.deepcopy(self.yaml_dict)
-
-        # set the format attributes if available
-        try:
-            tmp_copy.fa.set_block_style()
-        except AttributeError:
-            pass
+        tmp_copy = copy.deepcopy(self.yaml_dict)
 
         result = Yedit.add_entry(tmp_copy, path, value, self.separator)
         if result is None:
@@ -743,20 +701,7 @@ class Yedit(object):
     def create(self, path, value):
         ''' create a yaml file '''
         if not self.file_exists():
-            # deepcopy didn't work
-            # Try to use ruamel.yaml and fallback to pyyaml
-            try:
-                tmp_copy = yaml.load(yaml.round_trip_dump(self.yaml_dict,
-                                                          default_flow_style=False),
-                                     yaml.RoundTripLoader)
-            except AttributeError:
-                tmp_copy = copy.deepcopy(self.yaml_dict)
-
-            # set the format attributes if available
-            try:
-                tmp_copy.fa.set_block_style()
-            except AttributeError:
-                pass
+            tmp_copy = copy.deepcopy(self.yaml_dict)
 
             result = Yedit.add_entry(tmp_copy, path, value, self.separator)
             if result is not None:
@@ -773,7 +718,7 @@ class Yedit(object):
 
         curr_value = invalue
         if val_type == 'yaml':
-            curr_value = yaml.safe_load(str(invalue))
+            curr_value = default_yaml.load(str(invalue))
         elif val_type == 'json':
             curr_value = json.loads(invalue)
 
@@ -801,7 +746,7 @@ class Yedit(object):
         # If vtype is not str then go ahead and attempt to yaml load it.
         elif isinstance(inc_value, str) and 'str' not in vtype:
             try:
-                inc_value = yaml.safe_load(inc_value)
+                inc_value = default_yaml.load(inc_value)
             except Exception:
                 raise YeditException('Could not determine type of incoming value. ' +
                                      'value=[{0}] vtype=[{1}]'.format(type(inc_value), vtype))
